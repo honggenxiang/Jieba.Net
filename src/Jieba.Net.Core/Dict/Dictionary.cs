@@ -38,7 +38,7 @@ namespace Jieba.Net.Core.Dict
 
         /// <summary>
         /// 词典初始化
-        /// 由于IK Analyzer的词典采用Dictionary类的静态方法进行词典初始化
+        /// 由于Analyzer的词典采用Dictionary类的静态方法进行词典初始化
         /// 只有当Dictionary类被实际调用时，才会开始载入词典，
         /// 这将延长首次分词操作的时间
         /// 该方法提供了一个在应用加载阶段就初始化字典的手段
@@ -48,9 +48,26 @@ namespace Jieba.Net.Core.Dict
         public static Dictionary Initial(Configuration cfg)
         {
             //双检锁
-            if (singleton != null) return singleton;
-            Dictionary dictionary = new Dictionary(cfg);
-            Interlocked.CompareExchange(ref singleton, dictionary, null);
+            if (singleton == null)
+            {
+                lock (objLock)
+                {
+                    if (singleton == null)
+                    {
+                        Dictionary dictionary = new Dictionary(cfg);
+                        Interlocked.CompareExchange(ref singleton, dictionary, null);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Dictionary.Initial()不能被重复调用");
+
+                    }
+                }
+            }
+            else
+            {
+                throw  new InvalidOperationException("Dictionary.Initial()不能被重复调用");
+            }
             return singleton;
         }
         /// <summary>
@@ -135,7 +152,7 @@ namespace Jieba.Net.Core.Dict
             DictSegment ds = matchedHit.MatchedDictSegment;
             return ds.Match(charArray, currentIndex, 1, matchedHit);
         }
-    
+
 
         /// <summary>
         /// 加载主词典及扩展词典

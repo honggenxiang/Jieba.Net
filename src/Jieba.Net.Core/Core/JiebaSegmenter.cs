@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using Jieba.Net.Core.Dict;
 
 namespace Jieba.Net.Core.Core

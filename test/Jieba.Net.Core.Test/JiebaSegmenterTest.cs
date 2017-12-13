@@ -14,8 +14,9 @@ namespace Jieba.Net.Core.Test
         }
 
         [Fact]
-        public void DAG(){
-            new JiebaSegmenter().CreateDAG("地质矿产部");
+        public void DAG()
+        {
+            var dict = new JiebaSegmenter().CreateDAG("地质矿产部");
         }
     }
 }
