@@ -152,9 +152,9 @@ namespace Jieba.Net.Core.Dict
                     {
                         //添加Hit状态为前缀匹配
                         searchHit.SetPrefix();
-                        //记录当前位置的DictSegment
-                        searchHit.MatchedDictSegment = ds;
                     }
+                    //记录当前位置的DictSegment
+                    searchHit.MatchedDictSegment = ds;
                     return searchHit;
                 }
             }

@@ -5,10 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="Dict\big.dict">
+    <None Update="Dict\main2.dict">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Dict\main.dict">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dict\main.dict_bak">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

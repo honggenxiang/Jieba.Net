@@ -176,16 +176,16 @@ namespace Jieba.Net.Core.Dict
                     if (IsValidWord(word))
                     {
                         var vals = word.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                        WordNode node = vals.Length > 1 ? new WordNode()
+                        WordNode node = new WordNode()
                         {
-                            Frequency = int.Parse(vals[1])
-                        } : null;
+                            Frequency = vals.Length > 1 ? double.Parse(vals[1]) : 1  //默认词频1
+                        };
                         //词
                         mainDict.FillSegment(vals[0].ToLower().ToCharArray(), node);
                     }
                 }
             }
-           
+
         }
         /// <summary>
         /// 是否有效的关键字

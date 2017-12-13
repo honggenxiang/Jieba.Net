@@ -13,6 +13,6 @@ namespace Jieba.Net.Core.Core
         /// <summary>
         /// 词频
         /// </summary>
-        public int Frequency { get; set; }
+        public double Frequency { get; set; }
     }
 }
