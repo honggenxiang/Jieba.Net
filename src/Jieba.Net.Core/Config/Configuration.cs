@@ -9,12 +9,12 @@
     public interface Configuration
     {
         /// <summary>
-        /// UseSmart标志位
-        /// UseSmart=true，分词器使用智能切分策略,=false则使用细粒度切分
-        /// </summary>
-        bool UseSmart { get; set; }
-        /// <summary>
         /// 获取主词典路径
+        /// </summary>
+        string MainDictFile { get; }
+
+        /// <summary>
+        /// 获取词典文件夹
         /// </summary>
         string MainDictionary { get; }
     }

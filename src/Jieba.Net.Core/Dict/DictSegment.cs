@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Jieba.Net.Core.Core;
 
 namespace Jieba.Net.Core.Dict
 {
@@ -13,6 +14,7 @@ namespace Jieba.Net.Core.Dict
         /// <summary>
         /// 公共字典表，存储汉字
         /// </summary>
+        // ReSharper disable once StaticMemberInGenericType
         private static readonly Dictionary<char, char> charDict = new Dictionary<char, char>();
 
         /// <summary>
@@ -38,7 +40,7 @@ namespace Jieba.Net.Core.Dict
             {
                 if (childrenDict != null)
                     return childrenDict;
-                Dictionary<char, DictSegment> dict = new Dictionary<char, DictSegment>();
+                var dict = new Dictionary<char, DictSegment>();
                 Interlocked.CompareExchange(ref childrenDict, dict, null);
                 return childrenDict;
             }
@@ -52,7 +54,7 @@ namespace Jieba.Net.Core.Dict
         {
             if (childrenArray != null)
                 return childrenArray;
-            DictSegment[] arr = new DictSegment[ARRAY_LENGTH_LIMIT];
+            var arr = new DictSegment[ARRAY_LENGTH_LIMIT];
             Interlocked.CompareExchange(ref childrenArray, arr, null);
             return childrenArray;
 
@@ -72,6 +74,12 @@ namespace Jieba.Net.Core.Dict
         /// 当前DictSegment状态，默认0,1表示从根节点到当前节点的路径表示一个词
         /// </summary>
         private int nodeState;
+
+        /// <summary>
+        /// 词元基础信息
+        /// </summary>
+        public WordNode Node { get; private set; }
+
         #endregion
 
         public DictSegment(char nodeChar)
@@ -89,7 +97,7 @@ namespace Jieba.Net.Core.Dict
             if (searchHit == null)
             {
                 //如果hit为空,新建
-                searchHit = new Hit {Begin = begin};
+                searchHit = new Hit { Begin = begin };
                 //设置hit的文本位置
             }
             else
@@ -104,23 +112,24 @@ namespace Jieba.Net.Core.Dict
             DictSegment ds = null;
 
             //引用示例变量为本地变量，避免查询时遇到更新的同步问题
-            DictSegment[] segmentArray = childrenArray;
-            Dictionary<char, DictSegment> segmentDict = ChildrenDict;
+            var segmentArray = childrenArray;
+            var segmentDict = ChildrenDict;
 
             //Step1 在节点中查找keyChar对应的DictSegment
             if (segmentArray != null)
             {
                 //在数组中查找
-                DictSegment keySegment = new DictSegment(keyChar);
-                int position = Array.BinarySearch(segmentArray, 0, storeSize, keySegment);
+                var keySegment = new DictSegment(keyChar);
+                var position = Array.BinarySearch(segmentArray, 0, storeSize, keySegment);
                 if (position >= 0)
                 {
                     ds = segmentArray[position];
                 }
             }
-            else if (segmentDict != null)
-            {//在dict中查找
-                segmentDict.TryGetValue(keyChar, out ds);
+            else
+            {
+                //在dict中查找
+                segmentDict?.TryGetValue(keyChar, out ds);
             }
 
             //Step2 找到DictSegment,判断此的匹配状态，是否继续递归，还是返回结果
@@ -184,21 +193,21 @@ namespace Jieba.Net.Core.Dict
         /// <summary>
         /// 加载填充词典片段
         /// </summary>
-        public void FillSegment(char[] charArray)
+        public void FillSegment(char[] charArray, WordNode node)
         {
-            FillSegment(charArray, 0, charArray.Length, 1);
+            FillSegment(charArray, 0, charArray.Length, 1, node);
         }
         /// <summary>
         /// 屏蔽词典中的一个词
         /// </summary>
         public void DisableSegment(char[] charArray)
         {
-            FillSegment(charArray, 0, charArray.Length, 0);
+            FillSegment(charArray, 0, charArray.Length, 0,null);
         }
         /// <summary>
         /// 加载填充词典片段
         /// </summary>
-        private void FillSegment(char[] charArray, int begin, int length, int enabled)
+        private void FillSegment(char[] charArray, int begin, int length, int enabled, WordNode node)
         {
             lock (objLock)
             {
@@ -210,20 +219,21 @@ namespace Jieba.Net.Core.Dict
                     keyChar = beginChar;
                 }
                 //搜索当前节点的存储，查询对应keychar的keychar，如果没有则创建
-                DictSegment ds = LookforSegment(keyChar, enabled);
+                var ds = LookforSegment(keyChar, enabled);
                 if (ds != null)
                 {
                     //处理keyChar对应的segment
                     if (length > 1)
                     {
                         //次元还没有完全加入词典数
-                        ds.FillSegment(charArray, begin + 1, length - 1, enabled);
+                        ds.FillSegment(charArray, begin + 1, length - 1, enabled, node);
                     }
                     else if (length == 1)
                     {
                         //已经是次元的最后一个char，设置的当前节点状态为enabled
                         //enabled=1表明一个完整的词，enabled=0表示从词典中屏蔽当前词
                         ds.nodeState = enabled;
+                        ds.Node = node;
                     }
                 }
             }
@@ -239,9 +249,9 @@ namespace Jieba.Net.Core.Dict
             DictSegment ds = null;
             if (storeSize <= ARRAY_LENGTH_LIMIT)
             {//获取数组容器，如果数组未创建则创建数组
-                DictSegment[] segmentArray = GetChildrenArray();
+                var segmentArray = GetChildrenArray();
                 //搜寻数组
-                DictSegment keySegment = new DictSegment(keyChar);
+                var keySegment = new DictSegment(keyChar);
                 int position = Array.BinarySearch(segmentArray, 0, this.storeSize, keySegment);
                 if (position >= 0)
                 {

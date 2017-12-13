@@ -6,52 +6,49 @@ namespace Jieba.Net.Core.Config
     /// <summary>
     /// 默认配置
     /// </summary>
-    /// <remarks>
-    /// 
-    /// </remarks>
     public class DefaultConfig : Configuration
     {
         /// <summary>
-        /// 分词器默认字典路径
+        /// 分词器默认字典名称
         /// </summary>
-        private const string MainDictFile = "main.dict";
-        private const string DictDirctory = "dict";
+        private readonly string mainDictFileName = "main.dict";
+
+        /// <summary>
+        /// 默认字典文件夹名称
+        /// </summary>
+        private readonly string dictDirctoryName = "dict";
+
+
         /// <summary>
         /// 基础路径
         /// </summary>
 
         private readonly string base_path = AppDomain.CurrentDomain.BaseDirectory;
 
-        private DefaultConfig()
-        {
-            //IK词库部分
-            MainDictionary = Path.Combine(base_path,DictDirctory, MainDictFile);         
-        }
         /// <summary>
-        /// 返回配置实例
+        /// 分词器默认字典路径
         /// </summary>
-        /// <returns></returns>
+        public string MainDictFile { get; }
 
-        public static Configuration GetInstance()
-        {
-            return new DefaultConfig();
-        }
         /// <summary>
         /// 主词库路径
         /// </summary>
 
-        public string MainDictionary
+        public string MainDictionary { get; }
+
+
+        public DefaultConfig() : this(null)
         {
-            get; 
 
         }
-        /// <summary>
-        /// 是否智能分词
-        /// </summary>
-        public bool UseSmart
+
+        public DefaultConfig(string directoryName)
         {
-            get; set;
+            dictDirctoryName = dictDirctoryName ?? directoryName;
+            //词库文件夹
+            MainDictionary = Path.Combine(base_path, dictDirctoryName);
+            //主词典文件
+            MainDictFile = Path.Combine(MainDictionary, mainDictFileName);
         }
-      
     }
 }

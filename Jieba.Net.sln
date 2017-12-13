@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{AD57251E-A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jieba.Net.Core", "src\Jieba.Net.Core\Jieba.Net.Core.csproj", "{79243582-B7DC-4F9E-AC21-DFA4228B6D44}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jieba.Net.Core.Test", "test\Jieba.Net.Core.Test\Jieba.Net.Core.Test.csproj", "{B0C447D4-9C82-4C1F-9800-1F9D93FE7FB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,12 +21,17 @@ Global
 		{79243582-B7DC-4F9E-AC21-DFA4228B6D44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79243582-B7DC-4F9E-AC21-DFA4228B6D44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79243582-B7DC-4F9E-AC21-DFA4228B6D44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0C447D4-9C82-4C1F-9800-1F9D93FE7FB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0C447D4-9C82-4C1F-9800-1F9D93FE7FB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0C447D4-9C82-4C1F-9800-1F9D93FE7FB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0C447D4-9C82-4C1F-9800-1F9D93FE7FB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{79243582-B7DC-4F9E-AC21-DFA4228B6D44} = {3CCBBE57-EFE1-489B-9C42-F570F9CA1C58}
+		{B0C447D4-9C82-4C1F-9800-1F9D93FE7FB0} = {AD57251E-A50F-4735-8F73-7C5B5DFE44B1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2D090474-EA39-4CEC-B4CF-F75BC3D6C6B5}

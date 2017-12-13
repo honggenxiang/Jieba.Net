@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using Jieba.Net.Core.Config;
+using Jieba.Net.Core.Core;
 
 namespace Jieba.Net.Core.Dict
 {
@@ -15,6 +17,7 @@ namespace Jieba.Net.Core.Dict
         /// <summary>
         /// 同步锁
         /// </summary>
+        // ReSharper disable once StaticMemberInGenericType
         private static readonly object objLock = new object();
         /// <summary>
         /// 词典单例实例
@@ -54,7 +57,7 @@ namespace Jieba.Net.Core.Dict
                 {
                     if (singleton == null)
                     {
-                        Dictionary dictionary = new Dictionary(cfg);
+                        var dictionary = new Dictionary(cfg);
                         Interlocked.CompareExchange(ref singleton, dictionary, null);
                     }
                     else
@@ -66,7 +69,7 @@ namespace Jieba.Net.Core.Dict
             }
             else
             {
-                throw  new InvalidOperationException("Dictionary.Initial()不能被重复调用");
+                throw new InvalidOperationException("Dictionary.Initial()不能被重复调用");
             }
             return singleton;
         }
@@ -74,17 +77,15 @@ namespace Jieba.Net.Core.Dict
         /// 批量加载新词条
         /// </summary>
         /// <param name="words"></param>
-        public void AddWords(List<string> words)
+        public void AddWords(List<KeyValuePair<string, WordNode>> words)
         {
-            if (words != null)
+            if (words == null) return;
+            foreach (var word in words)
             {
-                foreach (var word in words)
+                if (!string.IsNullOrEmpty(word.Key))
                 {
-                    if (word != null)
-                    {
-                        //批量加载词条到主内存词典中
-                        GetSingleton().mainDict.FillSegment(word.Trim().ToLower().ToCharArray());
-                    }
+                    //批量加载词条到主内存词典中
+                    GetSingleton().mainDict.FillSegment(word.Key.Trim().ToLower().ToCharArray(), word.Value);
                 }
             }
         }
@@ -149,7 +150,7 @@ namespace Jieba.Net.Core.Dict
         public Hit MatchWithHit(char[] charArray, int currentIndex, Hit matchedHit)
 
         {
-            DictSegment ds = matchedHit.MatchedDictSegment;
+            var ds = matchedHit.MatchedDictSegment;
             return ds.Match(charArray, currentIndex, 1, matchedHit);
         }
 
@@ -159,21 +160,32 @@ namespace Jieba.Net.Core.Dict
         /// </summary>
         private void LoadMainDict()
         {
-            //建立一个主词典实例
-            mainDict = new DictSegment((char)0);
+            var files = Directory.GetFiles(cfg.MainDictionary, "*.dict");
             //读取量词词典文件
-            if (!File.Exists(cfg.MainDictionary))
+            if (!files.Contains(cfg.MainDictFile))
             {
                 throw new InvalidOperationException("未发现主词库词典!!!");
             }
-            string[] theWord = File.ReadAllLines(cfg.MainDictionary, Encoding.UTF8);
-            foreach (var word in theWord)
+            //建立一个主词典实例
+            mainDict = new DictSegment((char)0);
+            foreach (var file in files)
             {
-                if (IsValidWord(word))
+                var theWord = File.ReadAllLines(file, Encoding.UTF8);
+                foreach (var word in theWord)
                 {
-                    mainDict.FillSegment(word.Trim().ToLower().ToCharArray());
+                    if (IsValidWord(word))
+                    {
+                        var vals = word.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        WordNode node = vals.Length > 1 ? new WordNode()
+                        {
+                            Frequency = int.Parse(vals[1])
+                        } : null;
+                        //词
+                        mainDict.FillSegment(vals[0].ToLower().ToCharArray(), node);
+                    }
                 }
             }
+           
         }
         /// <summary>
         /// 是否有效的关键字
