@@ -5,7 +5,6 @@ namespace Jieba.Net.Core.Core
 {
     public class JiebaSegmenter
     {
-
         /// <summary>
         /// DAG创建
         /// </summary>
@@ -91,7 +90,7 @@ namespace Jieba.Net.Core.Core
         }
 
         /// <summary>
-        /// 基于词频进行分词
+        /// 基于词频的最大切分组合
         /// </summary>
         /// <param name="kw"></param>
         /// <returns></returns>
