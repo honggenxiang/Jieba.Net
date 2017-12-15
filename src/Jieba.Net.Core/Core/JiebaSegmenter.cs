@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using Jieba.Net.Core.Dict;
 
 namespace Jieba.Net.Core.Core
@@ -97,17 +98,46 @@ namespace Jieba.Net.Core.Core
         public List<string> SentenceProcess(string kw)
         {
             var dag = CreateDAG(kw);
+            var trie = Dictionary.GetSingleton();
             var route = Calc(kw, dag);
             var tokens = new List<string>();
             int i = 0, length = kw.Length;
+            var sb = new StringBuilder();
             while (i < length)
             {
                 var key = route[i].Key;
                 tokens.Add(kw.Substring(i, key - i + 1));
                 if (i == key)
+                {
+                    sb.Append(kw[i]);
                     i++;
+                    if (i == length && sb.Length > 1)
+                    {
+                        var buf = sb.ToString();
+                        //待识别的词
+                        if (trie.MatchInMainDict(buf.ToCharArray()).IsUnMatch())
+                        {
+                            //HMM模型识别未登录词
+                            //tokens.Add($"Ex_{buf}");
+                        }
+                    }
+                }
                 else
-                    i = key+1;
+                {
+                    if (sb.Length > 1)
+                    {
+                        var buf = sb.ToString();
+                        //待识别的词
+                        if (trie.MatchInMainDict(buf.ToCharArray()).IsUnMatch())
+                        {
+                            //HMM模型识别未登录词
+                            //tokens.Add($"Ex_{buf}");
+                        }
+                    }
+                    if (sb.Length > 0)
+                        sb = new StringBuilder();
+                    i = key + 1;
+                }
             }
             return tokens;
         }

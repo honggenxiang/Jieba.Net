@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Jieba.Net.Core
+namespace Jieba.Net.Core.Core
 {
     /// <summary>
     /// 字符类型

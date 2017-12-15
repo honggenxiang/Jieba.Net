@@ -1,4 +1,4 @@
-﻿namespace Jieba.Net.Core
+﻿namespace Jieba.Net.Core.Core
 {
     /// <summary>
     /// 字符集识别工具
