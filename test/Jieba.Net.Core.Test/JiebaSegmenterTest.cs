@@ -1,4 +1,5 @@
-﻿using Jieba.Net.Core.Config;
+﻿using System.Linq;
+using Jieba.Net.Core.Config;
 using Jieba.Net.Core.Core;
 using Jieba.Net.Core.Dict;
 using Xunit;
@@ -15,6 +16,7 @@ namespace Jieba.Net.Core.Test
         [Fact]
         public void DAG()
         {
+
             var dict = new JiebaSegmenter().CreateDAG("洪根祥");
         }
 
@@ -34,6 +36,12 @@ namespace Jieba.Net.Core.Test
             //var @string = "陈琛爱洪根祥";
             var @string = "我来到北京清华大学我来到";
             var tokens = new JiebaSegmenter().SentenceProcess(@string);
+        }
+
+        [Fact]
+        public void Viterbi()
+        {
+            var rs = new FinalSeg().Output("我爱北京天安门").ToList();
         }
     }
 }

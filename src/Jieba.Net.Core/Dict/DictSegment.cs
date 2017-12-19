@@ -12,10 +12,10 @@ namespace Jieba.Net.Core.Dict
     {
         #region 类型属性
         /// <summary>
-        /// 公共字典表，存储汉字
+        /// 公共字典表，存储汉字(全局字符缓存,压缩存储空间，非线程安全)
         /// </summary>
         // ReSharper disable once StaticMemberInGenericType
-        private static readonly Dictionary<char, char> charDict = new Dictionary<char, char>();
+        internal static readonly Dictionary<char, char> charDict = new Dictionary<char, char>();
 
         /// <summary>
         /// 数组大小上限
@@ -202,7 +202,7 @@ namespace Jieba.Net.Core.Dict
         /// </summary>
         public void DisableSegment(char[] charArray)
         {
-            FillSegment(charArray, 0, charArray.Length, 0,null);
+            FillSegment(charArray, 0, charArray.Length, 0, null);
         }
         /// <summary>
         /// 加载填充词典片段

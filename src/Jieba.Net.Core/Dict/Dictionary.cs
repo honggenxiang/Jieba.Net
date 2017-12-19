@@ -186,6 +186,8 @@ namespace Jieba.Net.Core.Dict
                 }
             }
 
+            //发射概率实例化
+            FinalSeg.Init(Path.Combine(cfg.MainDictionary, "prob_emit.txt"));
         }
         /// <summary>
         /// 是否有效的关键字
