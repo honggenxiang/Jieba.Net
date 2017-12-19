@@ -106,21 +106,11 @@ namespace Jieba.Net.Core.Core
             while (i < length)
             {
                 var key = route[i].Key;
-                tokens.Add(kw.Substring(i, key - i + 1));
+                var kWord = kw.Substring(i, key - i + 1);
                 if (i == key)
                 {
-                    sb.Append(kw[i]);
-                    i++;
-                    if (i == length && sb.Length > 1)
-                    {
-                        var buf = sb.ToString();
-                        //待识别的词
-                        if (trie.MatchInMainDict(buf.ToCharArray()).IsUnMatch())
-                        {
-                            //HMM模型识别未登录词
-                            //tokens.Add($"Ex_{buf}");
-                        }
-                    }
+                    //单字
+                    sb.Append(kw[i++]);               
                 }
                 else
                 {
@@ -128,15 +118,39 @@ namespace Jieba.Net.Core.Core
                     {
                         var buf = sb.ToString();
                         //待识别的词
-                        if (trie.MatchInMainDict(buf.ToCharArray()).IsUnMatch())
+                        if (trie.MatchInMainDict(buf.ToCharArray()).IsMatch())
                         {
+                            tokens.Add(buf);
+                        }else{
+                            //todo:
                             //HMM模型识别未登录词
                             //tokens.Add($"Ex_{buf}");
+                            tokens.AddRange(FinalSeg.Output(buf));
                         }
                     }
                     if (sb.Length > 0)
                         sb = new StringBuilder();
                     i = key + 1;
+                    tokens.Add(kWord);
+                }
+
+                //最后一位处理
+                if (i == length && sb.Length > 1)
+                {
+                    var buf = sb.ToString();
+                    //待识别的词
+                    if (trie.MatchInMainDict(buf.ToCharArray()).IsMatch())
+                    {
+                        tokens.Add(buf);
+
+                    }
+                    else
+                    {
+                        //todo:
+                        //HMM模型识别未登录词
+                        //tokens.Add($"Ex_{buf}");
+                        tokens.AddRange(FinalSeg.Output(buf));
+                    }
                 }
             }
             return tokens;

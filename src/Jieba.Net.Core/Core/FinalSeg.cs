@@ -21,7 +21,7 @@ namespace Jieba.Net.Core.Core
     /// </summary>
     public class FinalSeg
     {
-        private static readonly Double minFloat = -3.14e100;
+        private static readonly Double minFloat = -3.14e+100;
         /// <summary>
         /// 隐藏状态
         /// </summary>
@@ -141,7 +141,7 @@ namespace Jieba.Net.Core.Core
             }
         }
 
-        private List<State> Viterbi(string sentence)
+        private static List<State> Viterbi(string sentence)
         {
             var length = sentence.Length;
             var v = new Dictionary<int, Dictionary<State, Node>>(sentence.Length);
@@ -204,21 +204,23 @@ namespace Jieba.Net.Core.Core
             return obsStates;
         }
 
-        public IEnumerable<string> Output(string sentence)
+        public static IEnumerable<string> Output(string sentence)
         {
             var tokenStates = Viterbi(sentence);
             var begin = -1;
             for (var i = 0; i < tokenStates.Count; i++)
             {
                 var token = tokenStates[i];
-                if (token == State.S) yield return sentence[i].ToString();
+                if (token == State.S){
+                    begin = -1;
+                    yield return sentence.Substring(i, 1);}  //(i, 1);
                 else if (token == State.B)
                 {
                     begin = i;
                 }
                 else if (token == State.E && begin > -1)
                 {
-                    var rs = new string(sentence.ToArray(), begin, i - begin + 1);
+                    var rs = sentence.Substring(begin, i - begin + 1);//(begin, i - begin + 1);
                     begin = -1;
                     yield return rs;
                 }

@@ -13,29 +13,9 @@ namespace Jieba.Net.Core.Test
         [Fact]
         public void StateTest()
         {
-            var probTrans = new Dictionary<State, Dictionary<State, double>>
-            {
-                [State.B] = new Dictionary<State, double>
-                {
-                    [State.E] = -0.510825623765990,
-                    [State.M] = -0.916290731874155,
-                },
-                [State.E] = new Dictionary<State, double>
-                {
-                    [State.B] = -0.5897149736854513,
-                    [State.S] = -0.8085250474669937
-                },
-                [State.M] = new Dictionary<State, double>
-                {
-                    [State.E] = -0.33344856811948514,
-                    [State.M] = -1.2603623820268226
-                },
-                [State.S] = new Dictionary<State, double>
-                {
-                    [State.B] = -0.26268660809250016,
-                    [State.S] = -0.26268660809250016
-                },
-            };
+            var x1 = -3.14e+100;
+            var x2 = -3.14e100;
+            Assert.Equal(x1,x2);
         }
         private enum State
         {

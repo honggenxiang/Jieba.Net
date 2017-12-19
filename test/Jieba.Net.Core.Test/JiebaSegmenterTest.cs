@@ -34,14 +34,14 @@ namespace Jieba.Net.Core.Test
         public void SentenceProcess()
         {
             //var @string = "陈琛爱洪根祥";
-            var @string = "我来到北京清华大学我来到";
+            var @string = "我来到北京清华大学我爱北京天安门用全面的测试工具编写高质量代码";
             var tokens = new JiebaSegmenter().SentenceProcess(@string);
         }
 
         [Fact]
         public void Viterbi()
         {
-            var rs = new FinalSeg().Output("我爱北京天安门").ToList();
+            var rs =  FinalSeg.Output("我爱北京天安门").ToList();
         }
     }
 }
